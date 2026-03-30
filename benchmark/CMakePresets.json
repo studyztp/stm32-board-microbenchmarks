@@ -1,0 +1,28 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "stm32-g474re",
+            "displayName": "STM32G474RE (EntoBench)",
+            "description": "Cross-compile microbenchmarks for STM32G474RE using EntoBench harness",
+            "generator": "Unix Makefiles",
+            "toolchainFile": "${sourceDir}/../external/ento-bench/stm32-cmake/stm32-g474re.cmake",
+            "binaryDir": "${sourceDir}/../build-entobench",
+            "cacheVariables": {
+                "FETCH_ST_SOURCES": "ON",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "stm32-g474re",
+            "configurePreset": "stm32-g474re"
+        }
+    ]
+}

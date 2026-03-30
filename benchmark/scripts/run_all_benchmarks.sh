@@ -1,0 +1,169 @@
+#!/bin/bash
+# Run all microbenchmarks on STM32G474RE with 4 cache/prefetch configurations.
+#
+# Usage:
+#   ./benchmark/scripts/run_all_benchmarks.sh                # build + flash all 4 configs
+#   ./benchmark/scripts/run_all_benchmarks.sh --skip-build   # flash only
+#   ./benchmark/scripts/run_all_benchmarks.sh --config cache_pf  # run one config only
+#
+# Configurations:
+#   cache_pf    - cache ON,  prefetch ON
+#   cache_nopf  - cache ON,  prefetch OFF
+#   nocache_pf  - cache OFF, prefetch ON
+#   nocache_nopf- cache OFF, prefetch OFF
+#
+# Output: benchmark_logs/<config>/<name>.log
+#         benchmark_logs/flash_sizes.txt
+
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+
+SKIP_BUILD=0
+RUN_CONFIGS=()
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --skip-build)   SKIP_BUILD=1 ;;
+        --config)       RUN_CONFIGS+=("$2"); shift ;;
+        *) echo "Unknown arg: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+# Default: run all 4
+if [[ ${#RUN_CONFIGS[@]} -eq 0 ]]; then
+    RUN_CONFIGS=(cache_pf cache_nopf nocache_pf nocache_nopf)
+fi
+
+BUILD_DIR="build-entobench"
+LOG_DIR="benchmark_logs"
+PRESET="stm32-g474re"
+
+# Map config name -> JSON file
+config_json_for() {
+    case "$1" in
+        cache_pf)      echo "configs/microbench.json" ;;
+        cache_nopf)    echo "configs/microbench_noprefetch.json" ;;
+        nocache_pf)    echo "configs/microbench_nocache.json" ;;
+        nocache_nopf)  echo "configs/microbench_none.json" ;;
+        *) echo ""; return 1 ;;
+    esac
+}
+
+BENCHMARKS=(
+    # Compute
+    bench-nop
+    bench-alu
+    bench-alu16
+    bench-mul
+    bench-div
+    bench-div_short
+    bench-pushpop
+    bench-fpu
+    bench-dmb
+    bench-mixed_width
+    # Memory
+    bench-load
+    bench-load_dep
+    bench-store
+    bench-store_burst
+    bench-ldr_literal
+    bench-ccm_sram
+    bench-scs_read
+    bench-scs_store
+    # Cache/Prefetch
+    bench-art_prefetch
+    bench-icache_miss
+    # Branch
+    bench-branch
+    bench-bp_tight
+    bench-bp_long_body
+    bench-bp_forward
+    bench-bp_alternating
+    bench-bp_nested
+    bench-bp_align
+)
+
+flash_and_log() {
+    local target="$1"
+    local log="$2"
+    local label="$3"
+
+    echo ""
+    echo "=========================================="
+    echo "  Flashing: $label"
+    echo "  Log:      $log"
+    echo "=========================================="
+    echo ""
+
+    make -C "$BUILD_DIR" "stm32-flash-${target}-semihosted" 2>&1 | tee "$log"
+}
+
+record_sizes() {
+    local label="$1"
+    echo "=== $label ===" >> "$LOG_DIR/flash_sizes.txt"
+    for bench in "${BENCHMARKS[@]}"; do
+        local elf="$BUILD_DIR/bin/${bench}.elf"
+        if [[ -f "$elf" ]]; then
+            printf "%-30s " "$bench" >> "$LOG_DIR/flash_sizes.txt"
+            arm-none-eabi-size "$elf" | tail -1 >> "$LOG_DIR/flash_sizes.txt"
+        fi
+    done
+    echo "" >> "$LOG_DIR/flash_sizes.txt"
+}
+
+run_config() {
+    local config_json="$1"
+    local config_name="$2"
+    local log_subdir="$LOG_DIR/$config_name"
+    mkdir -p "$log_subdir"
+
+    echo ""
+    echo "############################################"
+    echo "  Configuration: $config_name"
+    echo "  Config file:   $config_json"
+    echo "############################################"
+    echo ""
+
+    if [[ $SKIP_BUILD -eq 0 ]]; then
+        echo "[build] Configuring with $config_json"
+        cmake --preset "$PRESET" -S benchmark \
+            -DMICROBENCH_CONFIG_FILE="$config_json"
+
+        echo "[build] Building all benchmarks"
+        for bench in "${BENCHMARKS[@]}"; do
+            cmake --build "$BUILD_DIR" --target "$bench" 2>&1 | tail -1
+        done
+    fi
+
+    record_sizes "$config_name"
+
+    for bench in "${BENCHMARKS[@]}"; do
+        flash_and_log "$bench" "$log_subdir/${bench}.log" "$bench ($config_name)"
+    done
+}
+
+# Clear previous logs
+mkdir -p "$LOG_DIR"
+> "$LOG_DIR/flash_sizes.txt"
+
+for cfg in "${RUN_CONFIGS[@]}"; do
+    json=$(config_json_for "$cfg")
+    if [[ -z "$json" ]]; then
+        echo "Unknown config: $cfg"
+        exit 1
+    fi
+    run_config "$json" "$cfg"
+done
+
+echo ""
+echo "=========================================="
+echo "  All benchmarks complete."
+echo "  Configs: ${RUN_CONFIGS[*]}"
+echo "  Logs:    $LOG_DIR/<config>/*.log"
+echo "  Sizes:   $LOG_DIR/flash_sizes.txt"
+echo "=========================================="
+echo ""
+echo "Generate CSV + LaTeX:"
+echo "  python3 benchmark/scripts/parse_logs.py $LOG_DIR -o $LOG_DIR/results.csv"
+echo "  python3 benchmark/scripts/logs_to_latex.py $LOG_DIR/results.csv"

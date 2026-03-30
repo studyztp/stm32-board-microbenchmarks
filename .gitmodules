@@ -1,0 +1,3 @@
+[submodule "external/ento-bench"]
+	path = external/ento-bench
+	url = git@github.com:cornell-brg/ento-bench.git
