@@ -85,13 +85,14 @@ static const BenchEntry benchmarks[] = {
 int main()
 {
     initialise_monitor_handles();
-
+#ifndef GEM5_SIM
     sys_clk_cfg();
+#endif
     SysTick_Setup();
     __enable_irq();
-
+#ifndef GEM5_SIM
     ENTO_BENCH_SETUP();
-
+#endif
     init_roi_tracking();
 
     for (const auto& b : benchmarks) {

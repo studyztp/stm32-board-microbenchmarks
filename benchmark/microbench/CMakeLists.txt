@@ -12,6 +12,25 @@ if(NOT DEFINED MICROBENCH_CONFIG_FILE)
   set(MICROBENCH_CONFIG_FILE "configs/microbench.json")
 endif()
 
+# gem5 semihosting ROI: uses BKPT #0xAB to call gem5 pseudo-ops
+option(GEM5_SEMIHOSTING "Use gem5 semihosting for ROI markers instead of DWT counters" OFF)
+# gem5 simulation mode: skips RCC/PWR/Flash/SysTick init that gem5 doesn't model
+option(GEM5_SIM "Target gem5 simulation (skip hardware peripheral init)" OFF)
+
+# GEM5_SEMIHOSTING implies GEM5_SIM
+if(GEM5_SEMIHOSTING AND NOT GEM5_SIM)
+  set(GEM5_SIM ON CACHE BOOL "Implied by GEM5_SEMIHOSTING" FORCE)
+endif()
+
+if(GEM5_SIM)
+  add_definitions(-DGEM5_SIM=1)
+  message(STATUS "gem5 simulation mode — peripheral init skipped")
+endif()
+if(GEM5_SEMIHOSTING)
+  add_definitions(-DGEM5_SEMIHOSTING=1)
+  message(STATUS "gem5 semihosting ROI enabled — DWT counters disabled")
+endif()
+
 # Libraries needed by all microbenchmarks
 set(MODULES
   bench
@@ -77,7 +96,11 @@ foreach(bench ${MICROBENCHMARKS})
       KERNEL_NAME=bench_${bench}
     )
 
-    target_include_directories(${TARGET_NAME} PRIVATE ${EIGEN_DIR})
+    target_include_directories(${TARGET_NAME} PRIVATE
+      ${EIGEN_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 
     list(APPEND BENCH_TARGETS ${TARGET_NAME})
 endforeach()
@@ -96,7 +119,11 @@ foreach(tgt ${INLINE_HARNESS_BENCHMARKS})
       SOURCES ${src_name}.cc
       LIBRARIES ${MODULES}
     )
-    target_include_directories(${tgt} PRIVATE ${EIGEN_DIR})
+    target_include_directories(${tgt} PRIVATE
+      ${EIGEN_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
     list(APPEND BENCH_TARGETS ${tgt})
 endforeach()
 
@@ -107,7 +134,11 @@ add_benchmark(bench-inline
   SOURCES inline_benchmarks.cc
   LIBRARIES ${MODULES}
 )
-target_include_directories(bench-inline PRIVATE ${EIGEN_DIR})
+target_include_directories(bench-inline PRIVATE
+  ${EIGEN_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 list(APPEND BENCH_TARGETS bench-inline)
 
 # =============================================================================
