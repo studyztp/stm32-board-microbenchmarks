@@ -227,6 +227,52 @@ if(OPENOCD_EXECUTABLE AND OPENOCD_INTERFACE)
 endif()
 
 # =============================================================================
+# Flash bank mode targets (STM32G4 category 3 devices with dual-bank flash)
+# =============================================================================
+if(OPENOCD_EXECUTABLE AND OPENOCD_INTERFACE AND STM32_CHIP MATCHES "STM32G4(7[34]|8[34]|91|A1)")
+  # Read current DBANK setting
+  add_custom_target(stm32-flash-bank-read
+    COMMAND ${OPENOCD_EXECUTABLE}
+      -f "${OPENOCD_INTERFACE}"
+      -f "${CMAKE_SOURCE_DIR}/openocd/${OPENOCD_CFG}"
+      -c "init"
+      -c "reset halt"
+      -c "stm32l4x option_read 0 0x20"
+      -c "shutdown"
+    USES_TERMINAL
+    COMMENT "Reading FLASH_OPTR (DBANK is bit 22)"
+  )
+
+  # Switch to single bank (128-bit fetch, clear DBANK bit 22)
+  add_custom_target(stm32-flash-bank-single
+    COMMAND ${OPENOCD_EXECUTABLE}
+      -f "${OPENOCD_INTERFACE}"
+      -f "${CMAKE_SOURCE_DIR}/openocd/${OPENOCD_CFG}"
+      -c "init"
+      -c "reset halt"
+      -c "stm32l4x option_write 0 0x20 0x00000000 0x00400000"
+      -c "stm32l4x option_load 0"
+      -c "shutdown"
+    USES_TERMINAL
+    COMMENT "Setting single bank mode (DBANK=0, 128-bit fetch)"
+  )
+
+  # Switch to dual bank (64-bit fetch, set DBANK bit 22)
+  add_custom_target(stm32-flash-bank-dual
+    COMMAND ${OPENOCD_EXECUTABLE}
+      -f "${OPENOCD_INTERFACE}"
+      -f "${CMAKE_SOURCE_DIR}/openocd/${OPENOCD_CFG}"
+      -c "init"
+      -c "reset halt"
+      -c "stm32l4x option_write 0 0x20 0x00400000 0x00400000"
+      -c "stm32l4x option_load 0"
+      -c "shutdown"
+    USES_TERMINAL
+    COMMENT "Setting dual bank mode (DBANK=1, 64-bit fetch)"
+  )
+endif()
+
+# =============================================================================
 # Summary
 # =============================================================================
 list(LENGTH BENCH_TARGETS BENCH_COUNT)
