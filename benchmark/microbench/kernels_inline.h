@@ -13,6 +13,7 @@
 
 KERNEL_INLINE bench_nop_kernel() {
     asm volatile(
+        ".balign 16       \n"
         ".rept 100 \n"
         "nop       \n"
         ".endr     \n"
@@ -22,6 +23,7 @@ KERNEL_INLINE bench_nop_kernel() {
 
 KERNEL_INLINE bench_nop_loop_kernel() {
     asm volatile(
+        ".balign 16         \n"
         "mov r0, #100       \n"
         "1:                 \n"
         "nop                \n"
@@ -33,6 +35,7 @@ KERNEL_INLINE bench_nop_loop_kernel() {
 
 KERNEL_INLINE bench_alu_kernel() {
     asm volatile(
+        ".balign 16          \n"
         ".rept 25            \n"
         "add.w r0, r0, r1   \n"
         "sub.w r2, r2, r3   \n"
@@ -45,6 +48,7 @@ KERNEL_INLINE bench_alu_kernel() {
 
 KERNEL_INLINE bench_alu16_kernel() {
     asm volatile(
+        ".balign 16          \n"
         ".rept 25            \n"
         "adds r0, r0, r1    \n"
         "subs r2, r2, r3    \n"
@@ -57,6 +61,7 @@ KERNEL_INLINE bench_alu16_kernel() {
 
 KERNEL_INLINE bench_alu16_loop_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "movs r0, #1         \n"
         "movs r1, #2         \n"
         "movs r2, #3         \n"
@@ -75,6 +80,7 @@ KERNEL_INLINE bench_alu16_loop_kernel() {
 
 KERNEL_INLINE bench_mul_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #7          \n"
         "mov r1, #13         \n"
         ".rept 100           \n"
@@ -86,6 +92,7 @@ KERNEL_INLINE bench_mul_kernel() {
 
 KERNEL_INLINE bench_div_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "ldr r0, =0x7FFFFFFF \n"
         "mov r1, #1          \n"
         ".rept 20            \n"
@@ -97,6 +104,7 @@ KERNEL_INLINE bench_div_kernel() {
 
 KERNEL_INLINE bench_div_short_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #15         \n"
         "mov r1, #3          \n"
         ".rept 20            \n"
@@ -108,6 +116,7 @@ KERNEL_INLINE bench_div_short_kernel() {
 
 KERNEL_INLINE bench_pushpop_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #0          \n"
         "mov r1, #1          \n"
         "mov r2, #2          \n"
@@ -128,6 +137,7 @@ KERNEL_INLINE bench_pushpop_kernel() {
 
 KERNEL_INLINE bench_fpu_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "vmov s0, #1.0       \n"
         "vmov s1, #2.0       \n"
         ".rept 20            \n"
@@ -143,6 +153,7 @@ KERNEL_INLINE bench_fpu_kernel() {
 
 KERNEL_INLINE bench_dmb_kernel() {
     asm volatile(
+        ".balign 16\n"
         ".rept 20  \n"
         "dmb sy    \n"
         ".endr     \n"
@@ -158,6 +169,7 @@ KERNEL_INLINE bench_dmb_kernel() {
 
 KERNEL_INLINE bench_mixed_width_kernel() {
     asm volatile(
+        ".balign 16          \n"
         ".rept 25            \n"
         "nop                 \n"
         "and.w r0, r0, r2   \n"
@@ -174,6 +186,7 @@ KERNEL_INLINE bench_mixed_width_kernel() {
 
 KERNEL_INLINE bench_load_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0x20000200  \n"
         ".rept 50             \n"
         "ldr r0, [r6]        \n"
@@ -184,6 +197,7 @@ KERNEL_INLINE bench_load_kernel() {
 
 KERNEL_INLINE bench_load_dep_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0x20000200  \n"
         "str r6, [r6]        \n"
         ".rept 50             \n"
@@ -195,6 +209,7 @@ KERNEL_INLINE bench_load_dep_kernel() {
 
 KERNEL_INLINE bench_store_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0x20000200  \n"
         "mov r0, #42         \n"
         ".rept 50             \n"
@@ -206,6 +221,7 @@ KERNEL_INLINE bench_store_kernel() {
 
 KERNEL_INLINE bench_store_burst_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0x20000200  \n"
         "mov r0, #42         \n"
         ".set OFF, 0          \n"
@@ -219,6 +235,7 @@ KERNEL_INLINE bench_store_burst_kernel() {
 
 KERNEL_INLINE bench_ldr_literal_kernel() {
     asm volatile(
+        ".balign 16          \n"
         ".irp i, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24 \n"
         "ldr r0, =0xDEAD0000 + \\i \n"
         "ldr r1, =0xBEEF0000 + \\i \n"
@@ -229,6 +246,7 @@ KERNEL_INLINE bench_ldr_literal_kernel() {
 
 KERNEL_INLINE bench_ccm_sram_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0x10000200  \n"
         "mov r0, #42         \n"
         "str r0, [r6]        \n"
@@ -244,6 +262,7 @@ KERNEL_INLINE bench_ccm_sram_kernel() {
 
 KERNEL_INLINE bench_scs_read_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0xE000E000  \n"
         ".rept 25             \n"
         "ldr r0, [r6, #0x18] \n"
@@ -255,6 +274,7 @@ KERNEL_INLINE bench_scs_read_kernel() {
 
 KERNEL_INLINE bench_scs_store_kernel() {
     asm volatile(
+        ".balign 16           \n"
         "ldr r6, =0xE000E000  \n"
         "mov r0, #0          \n"
         ".rept 25             \n"
@@ -271,7 +291,7 @@ KERNEL_INLINE bench_scs_store_kernel() {
 
 KERNEL_INLINE bench_art_prefetch_kernel() {
     asm volatile(
-        ".balign 8           \n"
+        ".balign 16          \n"
         ".rept 200           \n"
         "nop                 \n"
         ".endr               \n"
@@ -291,6 +311,7 @@ KERNEL_INLINE bench_icache_miss_kernel() {
 
 KERNEL_INLINE bench_branch_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #100        \n"
         "1:                  \n"
         "subs r0, r0, #1    \n"
@@ -301,6 +322,7 @@ KERNEL_INLINE bench_branch_kernel() {
 
 KERNEL_INLINE bench_bp_tight_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #200        \n"
         "1:                  \n"
         "subs r0, r0, #1    \n"
@@ -311,6 +333,7 @@ KERNEL_INLINE bench_bp_tight_kernel() {
 
 KERNEL_INLINE bench_bp_long_body_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #100        \n"
         "1:                  \n"
         ".rept 8             \n"
@@ -324,6 +347,7 @@ KERNEL_INLINE bench_bp_long_body_kernel() {
 
 KERNEL_INLINE bench_bp_forward_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #0          \n"
         "mov r1, #100        \n"
         "1:                  \n"
@@ -340,6 +364,7 @@ KERNEL_INLINE bench_bp_forward_kernel() {
 
 KERNEL_INLINE bench_bp_alternating_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #200        \n"
         "1:                  \n"
         "ands r1, r0, #1    \n"
@@ -354,6 +379,7 @@ KERNEL_INLINE bench_bp_alternating_kernel() {
 
 KERNEL_INLINE bench_bp_nested_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #20         \n"
         "1:                  \n"
         "mov r1, #10         \n"
@@ -368,6 +394,7 @@ KERNEL_INLINE bench_bp_nested_kernel() {
 
 KERNEL_INLINE bench_bp_align_kernel() {
     asm volatile(
+        ".balign 16          \n"
         "mov r0, #100        \n"
         ".balign 4           \n"
         "1:                  \n"

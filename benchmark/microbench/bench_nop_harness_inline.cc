@@ -21,6 +21,7 @@ int main()
 
     auto kernel = []() __attribute__((always_inline)) {
         asm volatile(
+            ".balign 16\n"
             ".rept 100 \n"
             "nop       \n"
             ".endr     \n"

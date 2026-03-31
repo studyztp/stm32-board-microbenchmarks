@@ -18,6 +18,7 @@ void __attribute__((noinline)) bench_nop_inline()
     start_roi();
     for (int i = 0; i < REPS; i++)
         asm volatile(
+            ".balign 16 \n"
             ".rept 100  \n"
             "nop        \n"
             ".endr      \n"
@@ -32,6 +33,7 @@ void __attribute__((noinline)) bench_alu16_inline()
     start_roi();
     for (int i = 0; i < REPS; i++)
         asm volatile(
+            ".balign 16           \n"
             ".rept 25             \n"
             "adds r0, r0, r1     \n"
             "subs r2, r2, r3     \n"
@@ -51,6 +53,7 @@ void __attribute__((noinline)) bench_mul64_inline()
     start_roi();
     for (int i = 0; i < REPS; i++)
         asm volatile(
+            ".balign 16            \n"
             "mov r8, #1            \n"
             ".rept 8               \n"
             "mul r0, r0, r8        \n"

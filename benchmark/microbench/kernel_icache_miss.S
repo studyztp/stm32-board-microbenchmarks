@@ -6,6 +6,7 @@
     .thumb_func
     .type bench_icache_miss_asm, %function
 bench_icache_miss_asm:
+    .balign 16
     mov r0, #0
 1:
     .rept 1024
