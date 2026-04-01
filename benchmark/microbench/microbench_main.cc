@@ -30,9 +30,9 @@ int main()
 #endif
     ENTO_BENCH_PRINT_CONFIG();
 
-    auto problem = EntoBench::make_basic_problem([]() __attribute__((always_inline)) {
-        KERNEL_FN();
-    });
+    auto problem = EntoBench::make_basic_problem<EntoBench::DefaultInlinePolicy>(
+        []() __attribute__((always_inline)) { KERNEL_FN(); }
+    );
     ENTO_BENCH_HARNESS_TYPE(decltype(problem));
     BenchHarness harness(problem, STR(KERNEL_NAME));
     harness.run();
