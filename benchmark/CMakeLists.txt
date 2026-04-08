@@ -91,3 +91,10 @@ endif()
 # Build microbenchmarks
 # =============================================================================
 add_subdirectory(microbench)
+
+# =============================================================================
+# Build EntoBench application benchmarks (perception, control, state-est)
+# =============================================================================
+add_subdirectory(${ENTOBENCH_DIR}/benchmark/perception ${CMAKE_BINARY_DIR}/ento-bench-perception)
+add_subdirectory(${ENTOBENCH_DIR}/benchmark/control ${CMAKE_BINARY_DIR}/ento-bench-control)
+add_subdirectory(${ENTOBENCH_DIR}/benchmark/state-est ${CMAKE_BINARY_DIR}/ento-bench-state-est)
