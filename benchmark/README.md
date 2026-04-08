@@ -145,3 +145,46 @@ choices). Only benchmarks that differ from v1 are included:
 Benchmarks prefixed `fetch_*`, `br_*`, and `art_cap_*` characterize the
 Cortex-M4 instruction fetch pipeline and ART accelerator behavior at various
 code sizes and branch distances.
+
+### Application Benchmarks
+
+These benchmarks come from the EntoBench submodule and represent real
+robotics workloads across the perception–estimation–control pipeline.
+They require the `datasets` symlink (see Setup below).
+
+| Target | Domain | Description |
+|---|---|---|
+| `bench-fastbrief-small` | Perception | FAST corner detection + BRIEF descriptors (80x80 images) |
+| `bench-madgwick-float-imu` | State Est. | Madgwick attitude filter (float, IMU-only) |
+| `bench-5pt-float` | State Est. | 5-point relative pose estimation (float) |
+| `bench-robofly-lqr` | Control | LQR controller for RoboFly |
+| `bench-robofly-tinympc` | Control | TinyMPC controller for RoboFly |
+
+**Setup**: Application benchmarks need the datasets symlink:
+```bash
+ln -sf external/ento-bench/datasets datasets
+```
+
+**Build** (same as microbenchmarks):
+```bash
+cd benchmark
+cmake --preset stm32-g474re -B ../build-entobench
+cmake --build ../build-entobench --target bench-fastbrief-small
+cmake --build ../build-entobench --target bench-madgwick-float-imu
+cmake --build ../build-entobench --target bench-5pt-float
+cmake --build ../build-entobench --target bench-robofly-lqr
+cmake --build ../build-entobench --target bench-robofly-tinympc
+```
+
+**gem5 build**:
+```bash
+cd benchmark
+cmake --preset stm32-g474re -B ../build-gem5 \
+    -DGEM5_SIM=ON -DGEM5_SEMIHOSTING=ON \
+    -DMICROBENCH_CONFIG_FILE="configs/microbench_gem5.json"
+cmake --build ../build-gem5 --target bench-fastbrief-small
+cmake --build ../build-gem5 --target bench-madgwick-float-imu
+cmake --build ../build-gem5 --target bench-5pt-float
+cmake --build ../build-gem5 --target bench-robofly-lqr
+cmake --build ../build-gem5 --target bench-robofly-tinympc
+```
