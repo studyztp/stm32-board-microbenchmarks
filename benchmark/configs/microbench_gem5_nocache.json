@@ -1,0 +1,10 @@
+{
+    "microbench": {
+        "reps": 1,
+        "inner_reps": 10,
+        "verbosity": 1,
+        "do_warmup": true,
+        "enable_caches": false,
+        "enable_prefetch": false
+    }
+}

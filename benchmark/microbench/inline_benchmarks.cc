@@ -10,7 +10,9 @@
 
 extern "C" void initialise_monitor_handles(void);
 
-static constexpr int REPS = 5000;
+#ifndef REPS
+#define REPS 5000
+#endif
 
 // ---------------------------------------------------------------
 void __attribute__((noinline)) bench_nop_inline()

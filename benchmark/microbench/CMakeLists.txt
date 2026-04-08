@@ -24,7 +24,8 @@ endif()
 
 if(GEM5_SIM)
   add_definitions(-DGEM5_SIM=1)
-  message(STATUS "gem5 simulation mode — peripheral init skipped")
+  add_definitions(-DINLINE_POLICY=1)
+  message(STATUS "gem5 simulation mode — peripheral init skipped, NoInline kernel policy")
 endif()
 if(GEM5_SEMIHOSTING)
   add_definitions(-DGEM5_SEMIHOSTING=1)
@@ -191,7 +192,11 @@ foreach(bench ${MICROBENCHMARKS_V2})
       KERNEL_NAME=bench_${bench}
     )
 
-    target_include_directories(${TARGET_NAME} PRIVATE ${EIGEN_DIR})
+    target_include_directories(${TARGET_NAME} PRIVATE
+      ${EIGEN_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 
     list(APPEND BENCH_TARGETS ${TARGET_NAME})
 endforeach()
@@ -217,7 +222,11 @@ foreach(bench ${MICROBENCHMARKS_FETCH})
       KERNEL_NAME=bench_${bench}
     )
 
-    target_include_directories(${TARGET_NAME} PRIVATE ${EIGEN_DIR})
+    target_include_directories(${TARGET_NAME} PRIVATE
+      ${EIGEN_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 
     list(APPEND BENCH_TARGETS ${TARGET_NAME})
 endforeach()
