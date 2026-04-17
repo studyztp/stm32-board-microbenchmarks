@@ -254,6 +254,27 @@ foreach(tgt ${INLINE_HARNESS_BENCHMARKS})
 endforeach()
 
 # =============================================================================
+# Hand-written capture benchmarks (single-instruction differential tests)
+# =============================================================================
+set(CAPTURE_BENCHMARKS
+    bench-vmul-capture
+)
+
+foreach(tgt ${CAPTURE_BENCHMARKS})
+    string(REPLACE "-" "_" src_name ${tgt})
+    add_benchmark(${tgt}
+      SOURCES ${src_name}.cc
+      LIBRARIES ${MODULES}
+    )
+    target_include_directories(${tgt} PRIVATE
+      ${EIGEN_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+    list(APPEND BENCH_TARGETS ${tgt})
+endforeach()
+
+# =============================================================================
 # Inline-asm benchmarks (ROI inside function, compiler-managed layout)
 # =============================================================================
 add_benchmark(bench-inline
