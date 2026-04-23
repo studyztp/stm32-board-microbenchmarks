@@ -71,7 +71,7 @@ for bench in "${BENCHES[@]}"; do
     # -re redirects simulated stdout/stderr into simout.txt/simerr.txt in outdir.
     # --no-art disables the STM32 ART accelerator (not supported by Zhantong's fork).
     if "$GEM5_BIN" -re --outdir="$outdir" "$GEM5_SCRIPT" \
-            --firmware "$firmware" --no-art > /dev/null 2>&1; then
+            --firmware "$firmware" --no-art --run-to-exit > /dev/null 2>&1; then
         result=$(grep "^ENTO_RESULT" "$outdir/simout.txt" 2>/dev/null | head -1 || true)
         if [[ -n "$result" ]]; then
             echo "$result" >> "$SUMMARY"
