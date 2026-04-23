@@ -45,6 +45,7 @@ BENCHES=(
     bench-vldmia-d1-capture
     bench-vldmia-d7wb-capture
     bench-vldmia-d-range-capture
+    bench-vstmia-d-range-capture
 )
 
 mkdir -p "$LOG_DIR"

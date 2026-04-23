@@ -46,6 +46,7 @@ FPU_BENCHES=(
     bench-vldmia-d1-capture
     bench-vldmia-d7wb-capture
     bench-vldmia-d-range-capture
+    bench-vstmia-d-range-capture
 )
 
 # TinyMPC variants — opt-in via INCLUDE_MPC=1 (slower, already known to NaN in gem5).
