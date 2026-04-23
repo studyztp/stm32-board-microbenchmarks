@@ -14,6 +14,7 @@ LOG_DIR="verification/logs/board"
 SUMMARY_FILE="$LOG_DIR/ento_results.txt"
 
 BENCHES=(
+    bench-tinympc-capture
     bench-fpu-vadd-f32
     bench-fpu-vsub-f32
     bench-fpu-vmul-f32

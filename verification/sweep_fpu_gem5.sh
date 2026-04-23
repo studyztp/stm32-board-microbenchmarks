@@ -20,6 +20,7 @@ OUT_BASE="verification/logs/gem5"
 SUMMARY="$OUT_BASE/ento_results.txt"
 
 BENCHES=(
+    bench-tinympc-capture
     bench-fpu-vadd-f32
     bench-fpu-vsub-f32
     bench-fpu-vmul-f32

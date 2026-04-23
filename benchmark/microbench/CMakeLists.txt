@@ -258,6 +258,7 @@ endforeach()
 # =============================================================================
 set(CAPTURE_BENCHMARKS
     bench-vmul-capture
+    bench-tinympc-capture
 )
 
 foreach(tgt ${CAPTURE_BENCHMARKS})
