@@ -20,6 +20,10 @@
 
 extern "C" void initialise_monitor_handles(void);
 
+#ifndef TINYMPC_MAX_ITER
+#define TINYMPC_MAX_ITER 100
+#endif
+
 constexpr int num_states  = 12;
 constexpr int num_inputs  = 4;
 constexpr int len_horizon = 10;
@@ -142,11 +146,11 @@ int main()
 
   static Solver solver(Adyn, Bdyn, Q, R, rho_value, x_min, x_max, u_min, u_max, false);
 
-  // Match bench_tinympc.cc: max_iter=100, keep default tolerances.
+  // max_iter parameterized via TINYMPC_MAX_ITER define (default 100) for bisection.
   auto tiny_settings = solver.get_settings();
   solver.update_settings(tiny_settings.abs_pri_tol,
                          tiny_settings.abs_dua_tol,
-                         100,
+                         TINYMPC_MAX_ITER,
                          tiny_settings.check_termination,
                          tiny_settings.en_state_bound,
                          tiny_settings.en_input_bound);

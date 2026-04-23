@@ -21,6 +21,10 @@ SUMMARY="$OUT_BASE/ento_results.txt"
 
 BENCHES=(
     bench-tinympc-capture
+    bench-tinympc-capture-iter1
+    bench-tinympc-capture-iter5
+    bench-tinympc-capture-iter20
+    bench-tinympc-capture-iter50
     bench-fpu-vadd-f32
     bench-fpu-vsub-f32
     bench-fpu-vmul-f32

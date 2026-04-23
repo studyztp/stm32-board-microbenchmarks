@@ -275,6 +275,24 @@ foreach(tgt ${CAPTURE_BENCHMARKS})
     list(APPEND BENCH_TARGETS ${tgt})
 endforeach()
 
+# TinyMPC iteration-count variants — same .cc, different TINYMPC_MAX_ITER.
+# Used to bisect ADMM iteration count when hunting board↔gem5 divergence.
+set(TINYMPC_ITER_VARIANTS 1 5 20 50)
+foreach(iter ${TINYMPC_ITER_VARIANTS})
+    set(variant_tgt "bench-tinympc-capture-iter${iter}")
+    add_benchmark(${variant_tgt}
+      SOURCES bench_tinympc_capture.cc
+      LIBRARIES ${MODULES}
+    )
+    target_include_directories(${variant_tgt} PRIVATE
+      ${EIGEN_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+    target_compile_definitions(${variant_tgt} PRIVATE TINYMPC_MAX_ITER=${iter})
+    list(APPEND BENCH_TARGETS ${variant_tgt})
+endforeach()
+
 # =============================================================================
 # Generated FPU capture benchmarks (verification/gen/fpu_single.py)
 # =============================================================================
@@ -318,6 +336,15 @@ add_configured_benchmark_group_with_target_configs("microbench"
   TARGETS ${BENCH_TARGETS}
   CONFIG_FILE "${CMAKE_SOURCE_DIR}/${MICROBENCH_CONFIG_FILE}"
 )
+
+# Force INNER_REPS=1 on all TinyMPC capture variants. TinyMPC's solver retains
+# state (x0, x_ref, duals) across solve() calls, so N > 1 would be "1 real solve
+# + N-1 trivial re-solves from converged state". Using -U/-D via compile_options
+# (applied AFTER COMPILE_DEFINITIONS) guarantees the override wins.
+target_compile_options(bench-tinympc-capture PRIVATE -UINNER_REPS -DINNER_REPS=1)
+foreach(iter ${TINYMPC_ITER_VARIANTS})
+    target_compile_options(bench-tinympc-capture-iter${iter} PRIVATE -UINNER_REPS -DINNER_REPS=1)
+endforeach()
 
 # =============================================================================
 # STM32 flash/debug targets (if OpenOCD is available)
