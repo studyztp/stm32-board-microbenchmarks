@@ -3,7 +3,7 @@
         "reps": 1,
         "inner_reps": 10,
         "verbosity": 1,
-        "do_warmup": true,
+        "do_warmup": false,
         "enable_caches": true,
         "enable_prefetch": true
     }
