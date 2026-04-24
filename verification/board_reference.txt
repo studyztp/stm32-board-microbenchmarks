@@ -1,16 +1,26 @@
 # Board reference: STM32G474RE board ENTO_RESULT outputs.
-# Scope: FPU differential tests only (single-op, Level A repeat, Level B seq,
-#        preamble zeroing, hand-written vldm/vstm/vpush/vpop variants).
-#        TinyMPC + matvec variants are excluded — they depend on the known
-#        multi-d-reg vldmia bug and aren't useful signal until it's fixed.
+# Scope: FPU differential tests + TinyMPC capture variants.
+#        Matvec is still excluded — depends on the known multi-d-reg vldmia
+#        bug and segfaults gem5's decoder. TinyMPC was added back after
+#        Zhantong's gem5 fork started producing non-NaN tinympc output
+#        (2026-04-24); the diff is now meaningful signal.
+# Note: the board returns identical bytes for tinympc iter1/5/20/50/default
+#       (5211033e16c1eb3d5cd30f3e935e183e) — the solver converges fast on
+#       this problem, so increasing max_iters doesn't change captured u[0].
 # Diffed against gem5 output by verification/diff_gem5_vs_board.sh.
 # Refresh deliberately after a verified board sweep by:
-#   grep -vE '(tinympc|matvec)' verification/logs/board/ento_results.txt \
+#   grep -v matvec verification/logs/board/ento_results.txt \
 #     > verification/board_reference.txt.new
 #   # prepend this header, then replace the old file and commit.
 # source git sha: 18bcebc
 # captured:       2026-04-24T18:58:24Z (committed at repo state 977dab1)
 #
+ENTO_RESULT name=bench_tinympc_capture bytes=5211033e16c1eb3d5cd30f3e935e183e
+ENTO_RESULT name=bench_tinympc_capture_iter0 bytes=00000000000000000000000000000000
+ENTO_RESULT name=bench_tinympc_capture_iter1 bytes=5211033e16c1eb3d5cd30f3e935e183e
+ENTO_RESULT name=bench_tinympc_capture_iter5 bytes=5211033e16c1eb3d5cd30f3e935e183e
+ENTO_RESULT name=bench_tinympc_capture_iter20 bytes=5211033e16c1eb3d5cd30f3e935e183e
+ENTO_RESULT name=bench_tinympc_capture_iter50 bytes=5211033e16c1eb3d5cd30f3e935e183e
 ENTO_RESULT name=bench_fpu_vadd_f32 bytes=0000404000000000
 ENTO_RESULT name=bench_fpu_vsub_f32 bytes=000080bf00000000
 ENTO_RESULT name=bench_fpu_vmul_f32 bytes=0000004000000000
