@@ -348,6 +348,11 @@ target_include_directories(bench-inline PRIVATE
 )
 list(APPEND BENCH_TARGETS bench-inline)
 
+# Aggregate build target: everything under microbench/, nothing else.
+# Use this instead of `cmake --build` with no --target to avoid pulling in
+# unrelated (and currently-broken) ento-bench test/benchmark subdirs.
+add_custom_target(microbench-all DEPENDS ${BENCH_TARGETS})
+
 # =============================================================================
 # Configure benchmark group from JSON (must be after all targets are added)
 # =============================================================================

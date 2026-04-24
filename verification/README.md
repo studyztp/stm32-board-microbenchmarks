@@ -33,11 +33,24 @@ green; gem5 side pending):
 
 ## Running
 
+Build just the microbench targets (avoids pulling in unrelated
+currently-broken ento-bench tests):
+
+```bash
+# Mac (board build)
+cmake --build build-entobench --target microbench-all -j
+
+# BRG server (gem5 build, see top-level README for configure step)
+cmake --build ../build-gem5 --target microbench-all -j
+```
+
+Then sweep:
+
 ```bash
 # Mac with board attached
 ./verification/sweep_fpu_board.sh
 
-# BRG server (source setup-brg.sh first)
+# BRG server
 ./verification/sweep_fpu_gem5.sh          # FPU only (default)
 ./verification/sweep_fpu_gem5.sh --mpc    # include TinyMPC variants
 ```
