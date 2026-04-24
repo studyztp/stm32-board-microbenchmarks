@@ -61,8 +61,7 @@ for bench in "${BENCHES[@]}"; do
         result=$(grep "^ENTO_RESULT" "$log" | head -1 || true)
         if [[ -n "$result" ]]; then
             echo "$result" >> "$SUMMARY_FILE"
-            # Print sig_hash + sig_hex for quick eyeball
-            echo "$result" | sed -E 's/.*sig_hash=([0-9a-f]+).*sig_hex=([0-9a-f]+).*/hash=\1 hex=\2/'
+            echo "$result" | sed -E 's/.*bytes=([0-9a-f]+).*/bytes=\1/'
         else
             echo "NO_ENTO_RESULT_LINE"
             echo "$bench: NO_ENTO_RESULT_LINE" >> "$SUMMARY_FILE"

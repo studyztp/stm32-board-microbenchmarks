@@ -20,7 +20,6 @@ public:
   static constexpr bool RequiresDataset_  = false;
   static constexpr bool SaveResults_      = false;
   static constexpr bool RequiresPrepare_  = true;
-  static constexpr bool DoValidate_       = false;
 
   bool deserialize_impl(const char*) { return true; }
   static constexpr const char* header_impl() { return ""; }
@@ -56,7 +55,6 @@ public:
     constexpr size_t n = sizeof(exit_);
     return EntoBench::ResultSig{
       .bytes = std::span<const uint8_t>{p, n},
-      .hash  = EntoBench::fnv1a_64(p, n),
     };
   }
 
