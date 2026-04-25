@@ -15,6 +15,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(ENTOBENCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../external/ento-bench)
 set(ENTOBENCH_SRC ${ENTOBENCH_DIR}/src)
 
+# Point ento-bench's bench/<category>/CMakeLists.txt files at our configs/ dir.
+# Set BEFORE entobench_helpers.cmake is included (the helpers cache this var
+# with a default that wouldn't apply to our submodule layout).
+set(ENTOBENCH_CONFIGS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/configs"
+    CACHE PATH "Directory holding *_benchmarks.json config files" FORCE)
+
 # Copy and include EntoBench helpers (defines add_benchmark, add_stm32_target, etc.)
 configure_file(${ENTOBENCH_DIR}/entobench_helpers.cmake
                ${CMAKE_SOURCE_DIR}/entobench_helpers.cmake COPYONLY)

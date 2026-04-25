@@ -40,6 +40,7 @@
       "description": "TinyMPC solver benchmark"
     },
     "bench-robofly-lqr": {
+      "enable_prefetch": true,
       "reps": 1,
       "inner_reps": 2,
       "verbosity": 1,

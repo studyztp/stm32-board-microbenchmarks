@@ -5,17 +5,27 @@
     "verbosity": 1,
     "enable_caches": false,
     "enable_vectorization": false,
-    "max_problems": 10,
+    "max_problems": 10
   },
 
   "targets" : {
+    "bench-fastbrief-small": {
+      "enable_prefetch": true,
+      "reps": 1,
+      "inner_reps": 1,
+      "verbosity": 1,
+      "enable_caches": true,
+      "enable_vectorization": false,
+      "max_problems": 10
+    },
+
     "bench-fastbrief-large": {
       "reps": 1,
       "inner_reps": 1,
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": true,
-      "max_problems": 10,
+      "max_problems": 10
     },
 
     "bench-fastbrief-medium": {
@@ -24,16 +34,7 @@
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": false,
-      "max_problems": 10,
-    },
-
-    "bench-fastbrief-large": {
-      "reps": 1,
-      "inner_reps": 1,
-      "verbosity": 1,
-      "enable_caches": true,
-      "enable_vectorization": true,
-      "max_problems": 10,
+      "max_problems": 10
     },
 
     "bench-orb-small": {
@@ -42,7 +43,7 @@
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": true,
-      "max_problems": 10,
+      "max_problems": 10
     },
 
     "bench-orb-medium": {
@@ -51,7 +52,7 @@
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": true,
-      "max_problems": 10,
+      "max_problems": 10
     },
 
     "bench-orb-large": {
@@ -60,7 +61,7 @@
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": true,
-      "max_problems": 10,
+      "max_problems": 10
     },
 
     "bench-lkof-small": {
@@ -69,7 +70,7 @@
       "verbosity": 1,
       "enable_caches": false,
       "enable_vectorization": true,
-      "max_problems": 0,
+      "max_problems": 0
     },
 
     "bench-lkof-medium": {
@@ -78,7 +79,7 @@
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": true,
-      "max_problems": 0,
+      "max_problems": 0
     },
 
     "bench-image-interp-of-small": {
@@ -87,7 +88,7 @@
       "verbosity": 1,
       "enable_caches": false,
       "enable_vectorization": true,
-      "max_problems": 0,
+      "max_problems": 0
     },
 
 
@@ -97,7 +98,7 @@
       "verbosity": 1,
       "enable_caches": false,
       "enable_vectorization": true,
-      "max_problems": 0,
+      "max_problems": 0
     },
 
     "bench-block-of-small": {
@@ -106,7 +107,7 @@
       "verbosity": 1,
       "enable_caches": false,
       "enable_vectorization": true,
-      "max_problems": 0,
+      "max_problems": 0
     },
 
     "bench-block-of-medium": {
@@ -115,7 +116,7 @@
       "verbosity": 1,
       "enable_caches": true,
       "enable_vectorization": true,
-      "max_problems": 0,
+      "max_problems": 0
     }
   }
 } 
