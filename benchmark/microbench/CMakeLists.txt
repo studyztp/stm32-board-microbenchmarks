@@ -362,13 +362,23 @@ add_configured_benchmark_group_with_target_configs("microbench"
   CONFIG_FILE "${CMAKE_SOURCE_DIR}/${MICROBENCH_CONFIG_FILE}"
 )
 
-# Force INNER_REPS=1 on all TinyMPC diff variants. TinyMPC's solver retains
-# state (x0, x_ref, duals) across solve() calls, so N > 1 would be "1 real solve
-# + N-1 trivial re-solves from converged state". Using -U/-D via compile_options
-# (applied AFTER COMPILE_DEFINITIONS) guarantees the override wins.
-target_compile_options(bench-tinympc-diff PRIVATE -UINNER_REPS -DINNER_REPS=1)
-foreach(iter ${TINYMPC_ITER_VARIANTS})
-    target_compile_options(bench-tinympc-diff-iter${iter} PRIVATE -UINNER_REPS -DINNER_REPS=1)
+# Force REPS=1, INNER_REPS=1, DO_WARMUP=0 on every diff-style test (capture
+# tests that observe a single point-in-time byte snapshot). Without this, the
+# JSON-driven harness multiplicity (microbench.json: reps=10, inner_reps=5000,
+# do_warmup=true) cascades solver/asm state across calls and breaks per-iter
+# gating — most visibly on TinyMPC, where MAX_ITER=1 silently becomes "many"
+# because the static Solver retains state across the harness's 50001 calls.
+# Using target_compile_options with -U/-D (applied AFTER target_compile_defs
+# from the configured benchmark group) guarantees the override wins.
+# bench-inline is the sole non-diff target here and is intentionally excluded.
+set(DIFF_TARGETS ${BENCH_TARGETS})
+list(REMOVE_ITEM DIFF_TARGETS bench-inline)
+foreach(tgt ${DIFF_TARGETS})
+    target_compile_options(${tgt} PRIVATE
+      -UINNER_REPS -DINNER_REPS=1
+      -UREPS        -DREPS=1
+      -UDO_WARMUP   -DDO_WARMUP=0
+    )
 endforeach()
 
 # =============================================================================

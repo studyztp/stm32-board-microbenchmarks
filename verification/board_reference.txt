@@ -12,13 +12,14 @@
 #   grep -v matvec verification/logs/board/ento_results.txt \
 #     > verification/board_reference.txt.new
 #   # prepend this header, then replace the old file and commit.
-# source git sha: b1ac808 (pre-rename commit; sweep ran with rename staged)
-# captured:       2026-04-25T17:32:09Z; 72/72 OK (matvec excluded)
+# source git sha: 14f2dda + uncommitted CMake diff-test override (REPS=1 INNER_REPS=1 DO_WARMUP=0)
+# captured:       2026-04-25T18:38:52Z; 72/72 OK (matvec excluded)
+#                 tinympc iter1/5 now show real ADMM progression (board↔QEMU byte-exact at every iter)
 #
 ENTO_RESULT name=bench_tinympc_diff bytes=5211033e16c1eb3d5cd30f3e935e183e
 ENTO_RESULT name=bench_tinympc_diff_iter0 bytes=00000000000000000000000000000000
-ENTO_RESULT name=bench_tinympc_diff_iter1 bytes=5211033e16c1eb3d5cd30f3e935e183e
-ENTO_RESULT name=bench_tinympc_diff_iter5 bytes=5211033e16c1eb3d5cd30f3e935e183e
+ENTO_RESULT name=bench_tinympc_diff_iter1 bytes=c5a5d33d36cdbf3df4b4e63da669f33d
+ENTO_RESULT name=bench_tinympc_diff_iter5 bytes=d4e9023e768aeb3d1c9f0f3e7321183e
 ENTO_RESULT name=bench_tinympc_diff_iter20 bytes=5211033e16c1eb3d5cd30f3e935e183e
 ENTO_RESULT name=bench_tinympc_diff_iter50 bytes=5211033e16c1eb3d5cd30f3e935e183e
 ENTO_RESULT name=bench_fpu_vadd_f32 bytes=0000404000000000
@@ -43,7 +44,7 @@ ENTO_RESULT name=bench_vldm_vstm bytes=0000803f00000040000040400000804000000000
 ENTO_RESULT name=bench_vmov bytes=efbeadde00000000
 ENTO_RESULT name=bench_vpush_vpop bytes=0000803f00000000
 ENTO_RESULT name=bench_vldmia_d1 bytes=0000803f00000040
-ENTO_RESULT name=bench_vldmia_d7wb bytes=0000803f0000004008fe0120
+ENTO_RESULT name=bench_vldmia_d7wb bytes=0000803f0000004028fe0120
 ENTO_RESULT name=bench_vldmia_d_range bytes=0000803f0000004000004040000080400000a0400000c0400000e04000000041
 ENTO_RESULT name=bench_vstmia_d_range bytes=0000803f0000004000004040000080400000a0400000c0400000e04000000041
 ENTO_RESULT name=bench_vcmpe_vmovcond bytes=0000003f0000803f000080bf00000000000000000000000000000000000000000000000000000000000080bf0000803f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080
