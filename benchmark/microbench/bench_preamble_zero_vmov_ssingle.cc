@@ -17,8 +17,8 @@ extern "C" void initialise_monitor_handles(void);
 
 namespace {
 
-class BenchPreambleZeroVmovSsingleCapture
-  : public EntoBench::CaptureProblem<BenchPreambleZeroVmovSsingleCapture, 132>
+class BenchPreambleZeroVmovSsingle
+  : public EntoBench::CaptureProblem<BenchPreambleZeroVmovSsingle, 132>
 {
 public:
   void prepare_impl()
@@ -164,9 +164,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchPreambleZeroVmovSsingleCapture problem;
+  BenchPreambleZeroVmovSsingle problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_preamble_zero_vmov_ssingle_capture");
+  BenchHarness harness(problem, "bench_preamble_zero_vmov_ssingle");
   harness.run();
 
   exit(0);

@@ -1,7 +1,5 @@
-// Hand-written single-instruction VFPv4 capture test.
-// Loads known entry state into s0/s1, runs vmul.f32, captures exit state + FPSCR.
-// Consumed by verification/run_diff.py — the ENTO_RESULT line in the output is
-// the differential signal.
+// VLDM/VSTM round-trip capture test. Loads 4 floats via VLDM, stores back via VSTM.
+// If VLDM/VSTM are broken in gem5, the round-trip exit state won't match entry.
 
 #include <cstdint>
 #include <span>
@@ -16,7 +14,7 @@ extern "C" void initialise_monitor_handles(void);
 
 namespace {
 
-class BenchVmulCapture : public EntoBench::EntoProblem<BenchVmulCapture>
+class BenchVldmVstm : public EntoBench::EntoProblem<BenchVldmVstm>
 {
 public:
   static constexpr bool RequiresDataset_  = false;
@@ -32,9 +30,9 @@ public:
   {
     entry_[0] = 0x3f800000u;   // 1.0f
     entry_[1] = 0x40000000u;   // 2.0f
-    exit_[0]  = 0;
-    exit_[1]  = 0;
-    // FZ=0, DN=0, RN, sticky exception bits cleared — matches IEEE 754 strict.
+    entry_[2] = 0x40400000u;   // 3.0f
+    entry_[3] = 0x40800000u;   // 4.0f
+    exit_[0] = exit_[1] = exit_[2] = exit_[3] = exit_[4] = 0;
     uint32_t fpscr_init = 0u;
     __asm__ volatile("vmsr fpscr, %0" : : "r"(fpscr_init));
   }
@@ -42,15 +40,13 @@ public:
   void solve_impl()
   {
     __asm__ volatile(
-      "vldr.32 s0, [%0, #0]\n\t"
-      "vldr.32 s1, [%0, #4]\n\t"
-      "vmul.f32 s0, s0, s1\n\t"
-      "vstr.32 s0, [%1, #0]\n\t"
+      "vldm %0, {s0-s3}\n\t"
+      "vstm %1, {s0-s3}\n\t"
       "vmrs r0, fpscr\n\t"
-      "str  r0, [%1, #4]\n\t"
+      "str  r0, [%1, #16]\n\t"
       :
       : "r"(entry_), "r"(exit_)
-      : "s0", "s1", "r0", "memory"
+      : "s0", "s1", "s2", "s3", "r0", "memory"
     );
   }
 
@@ -64,8 +60,8 @@ public:
   }
 
 private:
-  alignas(8) uint32_t entry_[2]{};
-  alignas(8) uint32_t exit_[2]{};
+  alignas(8) uint32_t entry_[4]{};
+  alignas(8) uint32_t exit_[5]{};   // 4 floats + FPSCR
 };
 
 }  // namespace
@@ -84,9 +80,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchVmulCapture problem;
+  BenchVldmVstm problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_vmul_capture");
+  BenchHarness harness(problem, "bench_vldm_vstm");
   harness.run();
 
   exit(0);

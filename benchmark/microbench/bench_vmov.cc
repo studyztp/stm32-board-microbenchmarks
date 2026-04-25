@@ -14,7 +14,7 @@ extern "C" void initialise_monitor_handles(void);
 
 namespace {
 
-class BenchVmovCapture : public EntoBench::EntoProblem<BenchVmovCapture>
+class BenchVmov : public EntoBench::EntoProblem<BenchVmov>
 {
 public:
   static constexpr bool RequiresDataset_  = false;
@@ -79,9 +79,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchVmovCapture problem;
+  BenchVmov problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_vmov_capture");
+  BenchHarness harness(problem, "bench_vmov");
   harness.run();
 
   exit(0);

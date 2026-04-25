@@ -15,7 +15,7 @@ extern "C" void initialise_monitor_handles(void);
 
 namespace {
 
-class BenchVpushVpopCapture : public EntoBench::EntoProblem<BenchVpushVpopCapture>
+class BenchVpushVpop : public EntoBench::EntoProblem<BenchVpushVpop>
 {
 public:
   static constexpr bool RequiresDataset_  = false;
@@ -83,9 +83,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchVpushVpopCapture problem;
+  BenchVpushVpop problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_vpush_vpop_capture");
+  BenchHarness harness(problem, "bench_vpush_vpop");
   harness.run();
 
   exit(0);

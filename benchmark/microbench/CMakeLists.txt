@@ -254,27 +254,28 @@ foreach(tgt ${INLINE_HARNESS_BENCHMARKS})
 endforeach()
 
 # =============================================================================
-# Hand-written capture benchmarks (single-instruction differential tests)
+# Hand-written differential tests (board-vs-gem5 byte-exact capture)
 # =============================================================================
-set(CAPTURE_BENCHMARKS
-    bench-vmul-capture
-    bench-tinympc-capture
-    bench-vldm-vstm-capture
-    bench-vmov-capture
-    bench-vpush-vpop-capture
-    bench-matvec-12x12-capture
-    bench-vldmia-d1-capture
-    bench-vldmia-d7wb-capture
-    bench-vldmia-d-range-capture
-    bench-vstmia-d-range-capture
+set(HANDWRITTEN_BENCHMARKS
+    bench-vmul
+    bench-tinympc-diff
+    bench-vldm-vstm
+    bench-vmov
+    bench-vpush-vpop
+    bench-matvec-12x12
+    bench-vldmia-d1
+    bench-vldmia-d7wb
+    bench-vldmia-d-range
+    bench-vstmia-d-range
+    bench-vcmpe-vmovcond
     # Preamble-zeroing unit tests (pin down the "zero s0..s31" path
     # used by Level A/B so any decoder bug there is caught in isolation).
-    bench-preamble-zero-vmov-dpair-capture
-    bench-preamble-zero-vmov-ssingle-capture
-    bench-preamble-zero-vldr-capture
+    bench-preamble-zero-vmov-dpair
+    bench-preamble-zero-vmov-ssingle
+    bench-preamble-zero-vldr
 )
 
-foreach(tgt ${CAPTURE_BENCHMARKS})
+foreach(tgt ${HANDWRITTEN_BENCHMARKS})
     string(REPLACE "-" "_" src_name ${tgt})
     add_benchmark(${tgt}
       SOURCES ${src_name}.cc
@@ -294,10 +295,10 @@ endforeach()
 # iter=0 equals iter=1, solver isn't doing anything).
 set(TINYMPC_ITER_VARIANTS 0 1 5 20 50)
 foreach(iter ${TINYMPC_ITER_VARIANTS})
-    set(variant_tgt "bench-tinympc-capture-iter${iter}")
-    set(variant_name "bench_tinympc_capture_iter${iter}")
+    set(variant_tgt "bench-tinympc-diff-iter${iter}")
+    set(variant_name "bench_tinympc_diff_iter${iter}")
     add_benchmark(${variant_tgt}
-      SOURCES bench_tinympc_capture.cc
+      SOURCES bench_tinympc_diff.cc
       LIBRARIES ${MODULES}
     )
     target_include_directories(${variant_tgt} PRIVATE
@@ -361,13 +362,13 @@ add_configured_benchmark_group_with_target_configs("microbench"
   CONFIG_FILE "${CMAKE_SOURCE_DIR}/${MICROBENCH_CONFIG_FILE}"
 )
 
-# Force INNER_REPS=1 on all TinyMPC capture variants. TinyMPC's solver retains
+# Force INNER_REPS=1 on all TinyMPC diff variants. TinyMPC's solver retains
 # state (x0, x_ref, duals) across solve() calls, so N > 1 would be "1 real solve
 # + N-1 trivial re-solves from converged state". Using -U/-D via compile_options
 # (applied AFTER COMPILE_DEFINITIONS) guarantees the override wins.
-target_compile_options(bench-tinympc-capture PRIVATE -UINNER_REPS -DINNER_REPS=1)
+target_compile_options(bench-tinympc-diff PRIVATE -UINNER_REPS -DINNER_REPS=1)
 foreach(iter ${TINYMPC_ITER_VARIANTS})
-    target_compile_options(bench-tinympc-capture-iter${iter} PRIVATE -UINNER_REPS -DINNER_REPS=1)
+    target_compile_options(bench-tinympc-diff-iter${iter} PRIVATE -UINNER_REPS -DINNER_REPS=1)
 endforeach()
 
 # =============================================================================

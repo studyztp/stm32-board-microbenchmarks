@@ -10,9 +10,9 @@ of the `ento-bench` harness (submodule at `external/ento-bench`).
 |---|---|
 | `src/*.S` | Assembly-only microbenchmarks (NOP, ALU, FPU, branch, cache, etc.) — original cycle-measurement suite. Built via root `CMakeLists.txt`. |
 | `benchmark/` | C++ benchmark suite using the EntoBench harness. Entry point: `benchmark/CMakeLists.txt` + `benchmark/CMakePresets.json`. Contains `microbench/`, `configs/`, `scripts/`. |
-| `benchmark/microbench/` | Microbenchmark targets. Two categories: **cycle benchmarks** (`bench-<name>` via `microbench_main.cc`, JSON-configured via `configs/microbench.json`), and **capture benchmarks** (`bench-*-capture`, hand-written or generated, used for differential testing). |
-| `verification/` | Differential-testing framework: capture test generator, board/gem5 sweep scripts, logs. See [`verification/README.md`](verification/README.md) for details. |
-| `external/ento-bench/` | EntoBench submodule — provides the Harness, Problem base classes, ROI macros, and the `CaptureProblem<Derived, N>` primitive used by capture tests. |
+| `benchmark/microbench/` | Microbenchmark targets. Two categories: **cycle benchmarks** (`bench-<name>` via `microbench_main.cc`, JSON-configured via `configs/microbench.json`), and **diff benchmarks** (`bench-<name>` for hand-written, `bench-fpu-<...>` for generated; both built on `CaptureProblem`, used for board↔gem5 differential testing). |
+| `verification/` | Differential-testing framework: diff-test generators, board/gem5 sweep scripts, logs. See [`verification/README.md`](verification/README.md) for details. |
+| `external/ento-bench/` | EntoBench submodule — provides the Harness, Problem base classes, ROI macros, and the `CaptureProblem<Derived, N>` primitive used by diff tests. |
 
 ## Build
 
@@ -41,16 +41,17 @@ inside `benchmark/`).
 Per-benchmark flash-and-log targets are generated when OpenOCD is available:
 ```bash
 make -C build-entobench stm32-flash-bench-nop-semihosted         # single bench
-./verification/sweep_fpu_board.sh                                # all capture tests
+./verification/sweep_fpu_board.sh                                # all diff tests
 ```
 
 Gem5 workflow is documented in [`verification/README.md`](verification/README.md).
 
 ## Testing changes
 
-The `CaptureProblem`-based tests under `benchmark/microbench/bench_*_capture.cc`
-each produce one `ENTO_RESULT name=<name> bytes=<hex>` line of semihosting
-output. Board sweep captures these into `verification/logs/board/ento_results.txt`
+The `CaptureProblem`-based tests under `benchmark/microbench/bench_*.cc`
+(plus `generated/bench_fpu_*.cc`) each produce one `ENTO_RESULT name=<name> bytes=<hex>`
+line of semihosting output. Board sweep captures these into
+`verification/logs/board/ento_results.txt`
 as the trusted reference. The gem5 sweep produces the same format; `diff`
 the two files to find divergences.
 

@@ -14,7 +14,7 @@
 
 extern "C" void initialise_monitor_handles(void);
 
-class BenchVstmiaDRangeCapture : public EntoBench::CaptureProblem<BenchVstmiaDRangeCapture, 32>
+class BenchVstmiaDRange : public EntoBench::CaptureProblem<BenchVstmiaDRange, 32>
 {
 public:
   void prepare_impl()
@@ -63,9 +63,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchVstmiaDRangeCapture problem;
+  BenchVstmiaDRange problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_vstmia_d_range_capture");
+  BenchHarness harness(problem, "bench_vstmia_d_range");
   harness.run();
 
   exit(0);

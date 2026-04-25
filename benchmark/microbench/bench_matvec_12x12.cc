@@ -74,7 +74,7 @@ int main()
 
   BenchMatVec12x12 problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_matvec_12x12_capture");
+  BenchHarness harness(problem, "bench_matvec_12x12");
   harness.run();
 
   exit(0);

@@ -13,7 +13,7 @@
 
 extern "C" void initialise_monitor_handles(void);
 
-class BenchVldmiaD1Capture : public EntoBench::CaptureProblem<BenchVldmiaD1Capture, 8>
+class BenchVldmiaD1 : public EntoBench::CaptureProblem<BenchVldmiaD1, 8>
 {
 public:
   void prepare_impl()
@@ -54,9 +54,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchVldmiaD1Capture problem;
+  BenchVldmiaD1 problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_vldmia_d1_capture");
+  BenchHarness harness(problem, "bench_vldmia_d1");
   harness.run();
 
   exit(0);

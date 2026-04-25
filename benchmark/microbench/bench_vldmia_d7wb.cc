@@ -1,6 +1,6 @@
 // EXACT matvec repro: VLDMIA with d7 AND writeback.
 //   vldmia rN!, {d7}   — load 8 bytes into d7 (= s14,s15), advance rN by 8
-// This is the specific instruction emitted at 0x800551c in bench-matvec-12x12-capture.elf
+// This is the specific instruction emitted at 0x800551c in bench-matvec-12x12.elf
 // that causes gem5's decoder to segfault.
 
 #include <cstdint>
@@ -14,7 +14,7 @@
 
 extern "C" void initialise_monitor_handles(void);
 
-class BenchVldmiaD7WbCapture : public EntoBench::CaptureProblem<BenchVldmiaD7WbCapture, 12>
+class BenchVldmiaD7Wb : public EntoBench::CaptureProblem<BenchVldmiaD7Wb, 12>
 {
 public:
   void prepare_impl()
@@ -57,9 +57,9 @@ int main()
 #endif
   ENTO_BENCH_PRINT_CONFIG();
 
-  BenchVldmiaD7WbCapture problem;
+  BenchVldmiaD7Wb problem;
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
-  BenchHarness harness(problem, "bench_vldmia_d7wb_capture");
+  BenchHarness harness(problem, "bench_vldmia_d7wb");
   harness.run();
 
   exit(0);

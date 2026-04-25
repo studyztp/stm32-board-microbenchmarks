@@ -1,5 +1,5 @@
 #!/bin/bash
-# Flash all generated FPU capture benchmarks to the STM32G474 board and
+# Flash all hand-written and generated FPU diff benchmarks to the STM32G474 board and
 # extract their ENTO_RESULT lines. Produces the board-side baseline for
 # differential testing against gem5/FVP.
 #
@@ -19,12 +19,12 @@ SUMMARY_FILE="$RUN_DIR/ento_results.txt"
 RUNS_LOG="$LOGS_ROOT/runs.log"
 
 BENCHES=(
-    bench-tinympc-capture
-    bench-tinympc-capture-iter0
-    bench-tinympc-capture-iter1
-    bench-tinympc-capture-iter5
-    bench-tinympc-capture-iter20
-    bench-tinympc-capture-iter50
+    bench-tinympc-diff
+    bench-tinympc-diff-iter0
+    bench-tinympc-diff-iter1
+    bench-tinympc-diff-iter5
+    bench-tinympc-diff-iter20
+    bench-tinympc-diff-iter50
     bench-fpu-vadd-f32
     bench-fpu-vsub-f32
     bench-fpu-vmul-f32
@@ -43,18 +43,19 @@ BENCHES=(
     bench-fpu-vcvt-s32-f32
     bench-fpu-vcvt-f32-u32
     bench-fpu-vcvt-u32-f32
-    bench-vldm-vstm-capture
-    bench-vmov-capture
-    bench-vpush-vpop-capture
-    bench-matvec-12x12-capture
-    bench-vldmia-d1-capture
-    bench-vldmia-d7wb-capture
-    bench-vldmia-d-range-capture
-    bench-vstmia-d-range-capture
+    bench-vldm-vstm
+    bench-vmov
+    bench-vpush-vpop
+    bench-matvec-12x12
+    bench-vldmia-d1
+    bench-vldmia-d7wb
+    bench-vldmia-d-range
+    bench-vstmia-d-range
+    bench-vcmpe-vmovcond
     # Preamble-zeroing unit tests (isolate the s0..s31 zeroing path)
-    bench-preamble-zero-vmov-dpair-capture
-    bench-preamble-zero-vmov-ssingle-capture
-    bench-preamble-zero-vldr-capture
+    bench-preamble-zero-vmov-dpair
+    bench-preamble-zero-vmov-ssingle
+    bench-preamble-zero-vldr
     # Level A — single FPU instruction repeated N times (fpu_repeat.py)
     bench-fpu-repeat-vadd-f32-n2
     bench-fpu-repeat-vadd-f32-n8
@@ -98,7 +99,7 @@ BENCHES=(
 mkdir -p "$RUN_DIR"
 : > "$SUMMARY_FILE"
 
-echo "Sweeping ${#BENCHES[@]} FPU capture tests on board..."
+echo "Sweeping ${#BENCHES[@]} FPU diff tests on board..."
 echo "  run dir: $RUN_DIR"
 echo
 

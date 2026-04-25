@@ -25,7 +25,7 @@ extern "C" void initialise_monitor_handles(void);
 #endif
 
 #ifndef BENCH_NAME
-#define BENCH_NAME bench_tinympc_capture
+#define BENCH_NAME bench_tinympc_diff
 #endif
 
 #define XSTR(x) #x
@@ -37,14 +37,14 @@ constexpr int len_horizon = 10;
 using Scalar_t = float;
 using Solver   = ::TinyMPCSolver<Scalar_t, num_states, num_inputs, len_horizon>;
 
-class BenchTinyMPCCapture : public EntoBench::EntoProblem<BenchTinyMPCCapture>
+class BenchTinyMPCDiff : public EntoBench::EntoProblem<BenchTinyMPCDiff>
 {
 public:
   static constexpr bool RequiresDataset_  = false;
   static constexpr bool SaveResults_      = false;
   static constexpr bool RequiresPrepare_  = true;
 
-  BenchTinyMPCCapture(Solver& solver) : solver_(solver) {}
+  BenchTinyMPCDiff(Solver& solver) : solver_(solver) {}
 
   bool deserialize_impl(const char*) { return true; }
   static constexpr const char* header_impl() { return ""; }
@@ -160,7 +160,7 @@ int main()
                          tiny_settings.en_state_bound,
                          tiny_settings.en_input_bound);
 
-  BenchTinyMPCCapture problem(solver);
+  BenchTinyMPCDiff problem(solver);
   ENTO_BENCH_HARNESS_TYPE(decltype(problem));
   BenchHarness harness(problem, STR(BENCH_NAME));
   harness.run();
